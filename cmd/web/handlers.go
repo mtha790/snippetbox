@@ -14,7 +14,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	snippets, err := app.snippets.Latest()
 	if err != nil {
-		app.serveError(w, r, err)
+		app.serverError(w, r, err)
 		return
 	}
 
@@ -55,7 +55,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		if errors.Is(err, models.ErrNoRecord) {
 			http.NotFound(w, r)
 		} else {
-			app.serveError(w, r, err)
+			app.serverError(w, r, err)
 		}
 		return
 	}
@@ -73,7 +73,7 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
-		app.serveError(w, r, err)
+		app.serverError(w, r, err)
 		return
 	}
 
