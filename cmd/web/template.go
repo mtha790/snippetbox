@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"html/template"
 	"path/filepath"
+	"time"
+
 	"snippetbox.mtha790.net/internal/models"
 )
 
@@ -11,6 +13,14 @@ type templateData struct {
 	CurrentYear int
 	Snippet     models.Snippet
 	Snippets    []models.Snippet
+}
+
+func humanDate(t time.Time) string {
+	return t.Format("02 Jan 2006 at 15:04")
+}
+
+var functions = template.FuncMap{
+	"humanDate": humanDate,
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {
@@ -21,9 +31,8 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	}
 	for _, page := range pages {
 		name := filepath.Base(page)
-		fmt.Printf("name: %v\n", name)
 		// First parse the base template file
-		ts, err := template.ParseFiles("./ui/html/base.tmpl.html")
+		ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl.html")
 		if err != nil {
 			return nil, err
 		}
