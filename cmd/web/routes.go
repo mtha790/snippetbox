@@ -4,22 +4,25 @@ import "net/http"
 
 type Middleware func(http.Handler) http.Handler
 
+func (app *application) dynamic(f func(http.ResponseWriter, *http.Request)) http.Handler {
+	return app.sessionManager.LoadAndSave(http.HandlerFunc(f))
+}
+
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
-	mux.HandleFunc("GET /{$}", app.home)
-	mux.HandleFunc("GET /snippet/view/{id}", app.snippetView)
-	mux.HandleFunc("GET /snippet/create", app.snippetCreate)
-	mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
+	mux.Handle("GET /{$}", app.dynamic(app.home))
+	mux.Handle("GET /snippet/view/{id}", app.dynamic(app.snippetView))
+	mux.Handle("GET /snippet/create", app.dynamic(app.snippetCreate))
+	mux.Handle("POST /snippet/create", app.dynamic(app.snippetCreatePost))
 
 	middlewares := []Middleware{
 		commonHeaders,
 		app.logRequest,
 		app.recoverPanic,
 	}
-
-	var handler http.Handler = mux
+	handler := http.Handler(mux)
 	for _, middleware := range middlewares {
 		handler = middleware(handler)
 	}
