@@ -17,6 +17,12 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /snippet/create", app.dynamic(app.snippetCreate))
 	mux.Handle("POST /snippet/create", app.dynamic(app.snippetCreatePost))
 
+	mux.Handle("GET /user/signup", app.dynamic(app.userSignup))
+	mux.Handle("POST /user/signup", app.dynamic(app.userSignupPost))
+	mux.Handle("GET /user/login", app.dynamic(app.userLogin))
+	mux.Handle("POST /user/login", app.dynamic(app.userLoginPost))
+	mux.Handle("POST /user/logout", app.dynamic(app.userLogoutPost))
+
 	middlewares := []Middleware{
 		commonHeaders,
 		app.logRequest,
