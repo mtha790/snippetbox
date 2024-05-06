@@ -8,11 +8,20 @@
     {{end}}
     <div>
         <label>Email:</label>
-        {{with .Form.FieldErrors.password}}
-        <label class="error">{{.}}</label>
+        {{with .Form.FieldErrors.email}}
+            <label class="error">{{.}}</label>
         {{end}}
-        <input type="submit" name="password">
+        <input type="email" name="email" value="{{.Form.Email}}">
     </div>
-    <div><input type="submit" value="Login"></div>
+    <div>
+        <label>Password:</label>
+        {{with .Form.FieldErrors.password}}
+            <label class="error">{{.}}</label>
+        {{end}}
+        <input type="password" name="password" value="{{.Form.Password}}">
+    </div>
+    <div>
+        <input type="submit" value="Login">
+    </div>
 </form>
 {{end}}
